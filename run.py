@@ -24,7 +24,7 @@ from utils import ToCudaVariable, ToLabel, DAVIS, upsample, downsample
 
 
 ### set pathes
-DAVIS_ROOT = '../data/davis-2017/data/DAVIS/'
+DAVIS_ROOT = '/Ship01/Dataset/DAVIS-2017-train-val/'
 palette = Image.open(DAVIS_ROOT + 'Annotations/480p/bear/00000.png').getpalette()
 
 def get_arguments():
