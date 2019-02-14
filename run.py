@@ -20,6 +20,7 @@ import time
 #
 from model import RGMP
 from utils import ToCudaVariable, ToLabel, DAVIS, upsample, downsample
+from water_dataset import WaterDataset
 
 
 
@@ -127,10 +128,11 @@ def Infer_MO(all_F, all_M, num_frames, num_objects, scales=[0.5, 0.75, 1.0]):
 
 if MO:
     Testset = DAVIS(DAVIS_ROOT, imset='2017/val.txt', multi_object=True)
-    Testloader = data.DataLoader(Testset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
-else:
+if SO:
     Testset = DAVIS(DAVIS_ROOT, imset='2016/val.txt')
-    Testloader = data.DataLoader(Testset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
+if test_case is not None:
+    Testset = WaterDataset(water_root, test_case)
+Testloader = data.DataLoader(Testset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
 
 model = nn.DataParallel(RGMP())
 if torch.cuda.is_available():

@@ -1,29 +1,42 @@
+import os
+import glob
+from PIL import Image
+import numpy as np
+from torch.utils import data
 
 class WaterDataset(data.Dataset):
     '''
     Dataset for WaterDataset
     '''
-    def __init__(self, root, imset='2016/val.txt'):
+    def __init__(self, root, video_name=None):
         self.root = root
-        self.mask_dir = os.path.join(root, 'Annotations', resolution)
-        self.image_dir = os.path.join(root, 'JPEGImages', resolution)
-        _imset_dir = os.path.join(root, 'ImageSets')
-        _imset_f = os.path.join(_imset_dir, imset)
+        self.mask_dir = os.path.join(root, 'annots')
+        self.image_dir = os.path.join(root, 'imgs')
 
         self.videos = []
         self.num_frames = {}
         self.num_objects = {}
         self.shape = {}
-        with open(os.path.join(_imset_f), "r") as lines:
-            for line in lines:
-                _video = line.rstrip('\n')
-                self.videos.append(_video)
-                self.num_frames[_video] = len(glob.glob(os.path.join(self.image_dir, _video, '*.jpg')))
-                _mask = np.array(Image.open(os.path.join(self.mask_dir, _video, '00000.png')).convert("P"))
-                self.num_objects[_video] = np.max(_mask)
-                self.shape[_video] = np.shape(_mask)
 
-        self.MO = multi_object
+        if video_name == None:
+            test_list_path = os.path.join(root, 'test_list.txt')
+            with open(os.path.join(test_list_path), "r") as lines:
+                for line in lines:
+                    _video = line.rstrip('\n')
+                    self.videos.append(_video)
+                    self.num_frames[_video] = len(glob.glob(os.path.join(self.image_dir, _video, '*.jpg')))
+                    _mask = np.array(Image.open(os.path.join(self.mask_dir, _video, '00000.png')).convert("P"))
+                    self.num_objects[_video] = np.max(_mask)
+                    self.shape[_video] = np.shape(_mask)
+
+        else:
+            _video = video_name
+            self.videos.append(_video)
+            self.num_frames[_video] = len(glob.glob(os.path.join(self.image_dir, _video, '*.jpg')))
+            _mask = np.array(Image.open(os.path.join(self.mask_dir, _video, '00000.png')).convert("P"))
+            self.num_objects[_video] = np.max(_mask)
+            self.shape[_video] = np.shape(_mask)
+
 
     def __len__(self):
         return len(self.videos)
