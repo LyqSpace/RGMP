@@ -25,21 +25,27 @@ from utils import ToCudaVariable, ToLabel, DAVIS, upsample, downsample
 
 ### set pathes
 DAVIS_ROOT = '/Ship01/Dataset/DAVIS-2017-train-val/'
+water_root = '/Ship01/Dataset/water/collection/'
+
 palette = Image.open(DAVIS_ROOT + 'Annotations/480p/bear/00000.png').getpalette()
 
 def get_arguments():
     parser = argparse.ArgumentParser(description="RGMP")
     parser.add_argument("-MO", action="store_true", help="Multi-object")
+    parser.add_argument("-SO", action="store_true", help="Single-object")
+    parser.add_argument('-t', '--test', destination='test_case', default=None)
     return parser.parse_args()
 args = get_arguments()
 MO = args.MO 
+SO = args.SO
+test_case = args.test_case
 
 if MO:
     print('Multi-object VOS on DAVIS-2017 valildation')
-else:
+if SO:
     print('Single-object VOS on DAVIS-2016 valildation')
-
-
+if test_case is not None:
+    print('VOS on', test_case)
 
 def Encode_MS(val_F1, val_P1, scales):
     ref = {}
